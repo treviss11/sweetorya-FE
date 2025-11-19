@@ -102,7 +102,7 @@ function RekapPage() {
 
     return (
         // CONTAINER UTAMA DIPERLEBAR (max-w-[98%] atau w-full)
-        <div className="w-full max-w-[98%] mx-auto px-2 md:px-4 pb-20">
+        <div className="w-full max-w-[100%] mx-auto px-2 md:px-4 pb-20">
             
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
