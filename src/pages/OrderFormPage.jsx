@@ -63,79 +63,80 @@ function OrderFormPage() {
         }
     };
 
+    const inputClass = "w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none";
+    const labelClass = "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1";
+
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
-            <h2 className="text-2xl font-bold mb-6">Form Pemesanan Baru</h2>
-            {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md max-w-3xl mx-auto border dark:border-gray-700">
+            <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Form Pemesanan Baru</h2>
+            {error && <div className="bg-red-100 dark:bg-red-900 border border-red-400 text-red-700 dark:text-red-200 px-4 py-3 rounded mb-4">{error}</div>}
 
             <form onSubmit={handleSubmit}>
-                <h4 className="text-lg font-semibold mb-3 border-b pb-2">Data Pemesan</h4>
+                <h4 className="text-lg font-semibold mb-3 border-b dark:border-gray-700 pb-2 text-gray-800 dark:text-gray-200">Data Pemesan</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Nama Pemesan</label>
-                        <input type="text" name="nama_pemesan" value={formData.nama_pemesan} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-2" required />
+                        <label className={labelClass}>Nama Pemesan</label>
+                        <input type="text" name="nama_pemesan" value={formData.nama_pemesan} onChange={handleChange} className={inputClass} required />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">No. Telp Pemesan</label>
-                        <input type="text" name="telp_pemesan" value={formData.telp_pemesan} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-2" required />
+                        <label className={labelClass}>No. Telp Pemesan</label>
+                        <input type="tel" name="telp_pemesan" value={formData.telp_pemesan} onChange={handleChange} className={inputClass} required />
                     </div>
                 </div>
 
-                <h4 className="text-lg font-semibold mb-3 border-b pb-2">Detail Pesanan</h4>
+                <h4 className="text-lg font-semibold mb-3 border-b dark:border-gray-700 pb-2 text-gray-800 dark:text-gray-200">Detail Pesanan</h4>
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Tipe Box</label>
-                        <select name="tipe_box" value={formData.tipe_box} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-2 bg-white" required>
+                        <label className={labelClass}>Tipe Box</label>
+                        <select name="tipe_box" value={formData.tipe_box} onChange={handleChange} className={inputClass} required>
                             <option value="">Pilih Tipe...</option>
                             <option value="6pcs">6pcs ({formatCurrency(HARGA_BOX['6pcs'])})</option>
                             <option value="9pcs">9pcs ({formatCurrency(HARGA_BOX['9pcs'])})</option>
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Jumlah Box</label>
-                        <input type="number" name="jumlah_box" value={formData.jumlah_box} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-2" required min="1" />
+                        <label className={labelClass}>Jumlah Box</label>
+                        <input type="number" name="jumlah_box" value={formData.jumlah_box} onChange={handleChange} className={inputClass} required min="1" />
                     </div>
                  </div>
-                 <div className="mb-6">
-                    <h4 className="text-xl font-bold text-blue-600">Total Estimasi: {formatCurrency(totalHarga)}</h4>
+                 <div className="mb-6 p-3 bg-blue-50 dark:bg-blue-900/30 rounded">
+                    <h4 className="text-xl font-bold text-blue-600 dark:text-blue-400">Total: {formatCurrency(totalHarga)}</h4>
                  </div>
 
-                <h4 className="text-lg font-semibold mb-3 border-b pb-2">Data Penerima & Pengiriman</h4>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Nama Penerima</label>
-                        <input type="text" name="nama_penerima" value={formData.nama_penerima} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-2" required />
-                    </div>
-                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">No. Telp Penerima</label>
-                        <input type="text" name="telp_penerima" value={formData.telp_penerima} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-2" required />
-                    </div>
+                <h4 className="text-lg font-semibold mb-3 border-b dark:border-gray-700 pb-2 text-gray-800 dark:text-gray-200">Pengiriman</h4>
+                 <div className="mb-4">
+                    <label className={labelClass}>Nama Penerima</label>
+                    <input type="text" name="nama_penerima" value={formData.nama_penerima} onChange={handleChange} className={inputClass} required />
                  </div>
                  <div className="mb-4">
-                     <label className="block text-sm font-medium text-gray-700 mb-1">Alamat Pengiriman</label>
-                    <textarea name="alamat_pengiriman" value={formData.alamat_pengiriman} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-2" rows="3" required></textarea>
+                     <label className={labelClass}>No. Telp Penerima</label>
+                     <input type="tel" name="telp_penerima" value={formData.telp_penerima} onChange={handleChange} className={inputClass} required />
+                 </div>
+                 <div className="mb-4">
+                     <label className={labelClass}>Alamat Pengiriman</label>
+                    <textarea name="alamat_pengiriman" value={formData.alamat_pengiriman} onChange={handleChange} className={inputClass} rows="3" required></textarea>
                  </div>
 
-                <h4 className="text-lg font-semibold mb-3 border-b pb-2">Kartu Ucapan (Opsional)</h4>
+                <h4 className="text-lg font-semibold mb-3 border-b dark:border-gray-700 pb-2 text-gray-800 dark:text-gray-200">Kartu Ucapan (Opsional)</h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Untuk:</label>
-                        <input type="text" name="ucapan_untuk" value={formData.ucapan_untuk} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-2" />
+                     <div className="md:col-span-3">
+                        <label className={labelClass}>Untuk:</label>
+                        <input type="text" name="ucapan_untuk" value={formData.ucapan_untuk} onChange={handleChange} className={inputClass} />
                     </div>
-                     <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Isi Ucapan:</label>
-                        <textarea name="ucapan_isi" value={formData.ucapan_isi} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-2" rows="1"></textarea>
+                     <div className="md:col-span-3">
+                        <label className={labelClass}>Isi Ucapan:</label>
+                        <textarea name="ucapan_isi" value={formData.ucapan_isi} onChange={handleChange} className={inputClass} rows="2"></textarea>
                     </div>
-                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Dari:</label>
-                        <input type="text" name="ucapan_dari" value={formData.ucapan_dari} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-2" />
+                     <div className="md:col-span-3">
+                        <label className={labelClass}>Dari:</label>
+                        <input type="text" name="ucapan_dari" value={formData.ucapan_dari} onChange={handleChange} className={inputClass} />
                     </div>
                 </div>
 
                 <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded shadow-lg disabled:opacity-50 transition duration-200"
                 >
                     {submitting ? 'Menyimpan...' : 'Simpan Pesanan'}
                 </button>

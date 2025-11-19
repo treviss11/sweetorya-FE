@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import './App.css'
 import Navbar from './components/Navbar';
@@ -10,7 +9,7 @@ import InventarisPage from './pages/InventarisPage';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200">
       <Navbar />
       <main className="container mx-auto p-4 pt-20"> {/* pt-20 untuk memberi ruang di bawah navbar fixed */}
         <Routes>
