@@ -10,6 +10,8 @@ function InventarisPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [formError, setFormError] = useState('');
+    const [searchKeyword, setSearchKeyword] = useState('');
+    const [activeSearch, setActiveSearch] = useState('');
 
     const loadAssets = async () => {
         setLoading(true); setError('');
@@ -20,7 +22,10 @@ function InventarisPage() {
         finally { setLoading(false); }
     };
 
-    useEffect(() => { loadAssets(); }, []);
+    useEffect(() => { loadAssets(activeSearch); }, [activeSearch]);
+
+    const handleSearch = (e) => { e.preventDefault(); setActiveSearch(searchKeyword); };
+    const handleResetSearch = () => { setSearchKeyword(''); setActiveSearch(''); };
 
     const handleNewItemChange = (e) => setNewItem({ ...newItem, [e.target.name]: e.target.value });
 
@@ -96,8 +101,14 @@ function InventarisPage() {
                 </form>
             </div>
 
-            {/* --- Daftar Inventaris --- */}
-            <h3 className="text-lg font-semibold mb-3 border-b dark:border-gray-700 pb-2 text-gray-800 dark:text-gray-200">Daftar Inventaris</h3>
+            <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4 border-b dark:border-gray-700 pb-4">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Daftar Inventaris</h3>
+                <form onSubmit={handleSearch} className="flex gap-2 w-full md:w-auto">
+                    <input type="text" placeholder="Cari aset..." value={searchKeyword} onChange={(e) => setSearchKeyword(e.target.value)} className="border border-gray-300 dark:border-gray-600 rounded px-3 py-1 text-sm w-full md:w-64 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:border-blue-500" />
+                    <button type="submit" className="bg-gray-700 hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-500 text-white px-4 py-1 rounded text-sm">Cari</button>
+                    {activeSearch && <button type="button" onClick={handleResetSearch} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">✖</button>}
+                </form>
+            </div>
             
             {loading && <div className="text-center py-4 text-gray-500 dark:text-gray-400">Loading data...</div>}
             {error && <div className="text-red-500 text-center py-4">{error}</div>}

@@ -20,17 +20,17 @@ export const updateOrderTestimonialApi = (orderId, testimonialData) => api.patch
 export const fetchSummary = () => api.get('/orders/summary');
 
 // --- Bahan API Calls ---
-export const fetchBahan = () => api.get('/bahan');
+export const fetchBahan = (search = '') => api.get(`/bahan?search=${search}`);
 export const createNewBahan = (bahanData) => api.post('/bahan', bahanData);
 export const updateBahanStockApi = (bahanId, stockData) => api.patch(`/bahan/${bahanId}/stock`, stockData);
 
 // --- Packaging API Calls ---
-export const fetchPackaging = () => api.get('/packaging');
+export const fetchPackaging = (search = '') => api.get(`/packaging?search=${search}`);
 export const createNewPackaging = (packagingData) => api.post('/packaging', packagingData);
 export const updatePackagingStockApi = (packagingId, stockData) => api.patch(`/packaging/${packagingId}/stock`, stockData);
 
 // --- Asset (Inventaris) API Calls ---
-export const fetchAssets = () => api.get('/inventaris');
+export const fetchAssets = (search = '') => api.get(`/inventaris?search=${search}`);
 export const createNewAsset = (assetData) => api.post('/inventaris', assetData);
 export const updateAssetKondisiApi = (assetId, kondisiData) => api.patch(`/inventaris/${assetId}/kondisi`, kondisiData);
 export const deleteAssetApi = (assetId) => api.delete(`/inventaris/${assetId}`);
