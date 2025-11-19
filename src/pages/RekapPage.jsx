@@ -12,18 +12,20 @@ function RekapPage() {
     const [orders, setOrders] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [searchKeyword, setSearchKeyword] = useState(''); // State input user
+    const [activeSearch, setActiveSearch] = useState('');   // State yang dikirim ke API
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [testimonialLinks, setTestimonialLinks] = useState({}); 
 
-    const loadData = async (page = 1) => {
+    const loadData = async (page, search = '') => {
         setLoading(true);
         setError(null);
         try {
-            const [summaryRes, ordersRes] = await Promise.all([
-                fetchSummary(),
-                fetchOrders(page)
-            ]);
+            // Kita pisah call-nya. Summary tidak perlu search, tapi Orders perlu.
+            const summaryRes = await fetchSummary(); // Selalu ambil summary total
+            const ordersRes = await fetchOrders(page, 20, search); // Ambil orders dengan filter search
+
             setSummary(summaryRes.data);
             setOrders(ordersRes.data.orders);
             setCurrentPage(ordersRes.data.currentPage);
@@ -43,8 +45,21 @@ function RekapPage() {
     };
 
     useEffect(() => {
-        loadData(currentPage);
-    }, [currentPage]); 
+        loadData(currentPage, activeSearch);
+    }, [currentPage, activeSearch]); 
+
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        setCurrentPage(1); // Reset ke halaman 1 setiap kali search baru
+        setActiveSearch(searchKeyword); // Trigger useEffect
+    };
+
+    // Handler Tombol Reset
+    const handleResetSearch = () => {
+        setSearchKeyword('');
+        setActiveSearch('');
+        setCurrentPage(1);
+    };
 
     const handleStatusUpdate = async (orderId, updateData) => {
         try {
@@ -179,6 +194,31 @@ function RekapPage() {
                         <span className="font-bold text-gray-800 dark:text-gray-200">{formatCurrency(summary.total_modal_aset)}</span>
                     </div>
                 </div>
+            </div>
+
+            <div className="mb-6">
+                <form onSubmit={handleSearchSubmit} className="flex flex-col md:flex-row gap-2">
+                    <input
+                        type="text"
+                        placeholder="Cari nama pemesan, penerima, atau status..."
+                        value={searchKeyword}
+                        onChange={(e) => setSearchKeyword(e.target.value)}
+                        className="flex-1 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors">
+                        🔍 Cari
+                    </button>
+                    {activeSearch && (
+                        <button type="button" onClick={handleResetSearch} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
+                            ✖ Reset
+                        </button>
+                    )}
+                </form>
+                {activeSearch && (
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                        Menampilkan hasil pencarian untuk: <span className="font-bold text-blue-500">"{activeSearch}"</span>
+                    </p>
+                )}
             </div>
 
             {/* TABEL UTAMA */}

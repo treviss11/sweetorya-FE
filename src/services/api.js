@@ -11,7 +11,9 @@ const api = axios.create({
 });
 
 // --- Order API Calls ---
-export const fetchOrders = (page = 1, limit = 20) => api.get(`/orders?page=${page}&limit=${limit}`);
+export const fetchOrders = (page = 1, limit = 20, search = '') => {
+    return api.get(`/orders?page=${page}&limit=${limit}&search=${search}`);
+};
 export const createNewOrder = (orderData) => api.post('/orders', orderData);
 export const updateOrderStatusApi = (orderId, statusData) => api.patch(`/orders/${orderId}/status`, statusData);
 export const updateOrderTestimonialApi = (orderId, testimonialData) => api.patch(`/orders/${orderId}/testimonial`, testimonialData);
