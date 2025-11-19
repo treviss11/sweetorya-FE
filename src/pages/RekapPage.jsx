@@ -171,7 +171,7 @@ function RekapPage() {
                         <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">ID</th>
                             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Pemesan</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Detail</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Detail Item</th> {/* Judul kolom diubah */}
                             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Pengiriman</th>
                             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Testimoni</th>
                             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Status</th>
@@ -188,10 +188,23 @@ function RekapPage() {
                                     <div className="font-medium">{order.nama_pemesan}</div>
                                     <div className="text-xs text-gray-500 dark:text-gray-400">{order.telp_pemesan}</div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                    <div>{order.jumlah_box} box @ {order.tipe_box}</div>
-                                    <div className="font-medium text-gray-600 dark:text-gray-300">{formatCurrency(order.harga_total)}</div>
+                                
+                                {/* --- BAGIAN DETAIL ITEM (UPDATED) --- */}
+                                <td className="px-6 py-4 text-sm text-gray-900 dark:text-white min-w-[200px]">
+                                    {/* Looping items di dalam tabel rekap */}
+                                    <div className="flex flex-col space-y-1">
+                                        {order.items && order.items.map((item, idx) => (
+                                            <div key={idx} className="text-xs border-b border-gray-100 dark:border-gray-700 pb-1 last:border-0">
+                                                <span className="font-bold text-blue-600 dark:text-blue-400">{item.jumlah}x</span> {item.nama_varian}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="font-bold mt-2 text-green-600 dark:text-green-400 text-right border-t dark:border-gray-600 pt-1">
+                                        {formatCurrency(order.harga_total)}
+                                    </div>
                                 </td>
+                                {/* ------------------------------------ */}
+
                                 <td className="px-6 py-4 text-sm max-w-xs text-gray-900 dark:text-white">
                                     <div><strong>Penerima:</strong> {order.nama_penerima}</div>
                                     <div className="text-gray-500 dark:text-gray-400 text-xs truncate" title={order.alamat_pengiriman}>
