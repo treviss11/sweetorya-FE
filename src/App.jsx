@@ -4,7 +4,7 @@ import Navbar from './components/Navbar';
 import RekapPage from './pages/RekapPage';
 import OrderFormPage from './pages/OrderFormPage';
 import BahanPage from './pages/BahanPage';
-import PackagingPage from './pages/Packaging';
+import PackagingPage from './pages/PackagingPage';
 import InventarisPage from './pages/InventarisPage';
 
 function App() {

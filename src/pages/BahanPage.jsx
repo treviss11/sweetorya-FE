@@ -7,7 +7,7 @@ const SATUAN_BAHAN = ['ltr', 'kg', 'gr', 'cc', 'ml', 'pack', 'biji', 'pcs', 'lem
 function BahanPage() {
     const [bahanList, setBahanList] = useState([]);
     const [newItem, setNewItem] = useState({ nama_bahan: '', stok: '', satuan: '', total_harga: '' });
-    const [updateJumlah, setUpdateJumlah] = useState({}); // { itemId: jumlahKeluar }
+    const [updateJumlah, setUpdateJumlah] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [formError, setFormError] = useState('');
@@ -17,7 +17,6 @@ function BahanPage() {
         try {
             const res = await fetchBahan();
             setBahanList(res.data);
-            // Reset updateJumlah state for new list
             const initialUpdates = {};
             res.data.forEach(item => { initialUpdates[item._id] = '' });
             setUpdateJumlah(initialUpdates);
@@ -37,8 +36,8 @@ function BahanPage() {
         }
         try {
             await createNewBahan(newItem);
-            setNewItem({ nama_bahan: '', stok: '', satuan: '', total_harga: '' }); // Reset form
-            loadBahan(); // Reload list
+            setNewItem({ nama_bahan: '', stok: '', satuan: '', total_harga: '' });
+            loadBahan();
             alert('Bahan baru berhasil ditambahkan.');
         } catch (err) {
             setFormError(err.response?.data?.msg || 'Gagal menambahkan bahan.'); console.error(err);
@@ -52,67 +51,88 @@ function BahanPage() {
         }
         try {
             await updateBahanStockApi(itemId, { jumlah_keluar: parseFloat(jumlahKeluar) });
-            loadBahan(); // Reload list
+            loadBahan();
             alert('Stok berhasil dikurangi.');
         } catch (err) {
             alert(err.response?.data?.msg || 'Gagal mengurangi stok.'); console.error(err);
         }
     };
 
-    return (
-        <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold mb-4">Manajemen Stok Bahan</h2>
+    // Style Class Konsisten
+    const inputClass = "w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:border-blue-500";
 
-            {/* Form Tambah Baru */}
-            <div className="border rounded p-4 mb-6">
-                 <h3 className="text-lg font-semibold mb-3">Tambah Bahan Baru</h3>
-                 {formError && <p className="text-red-500 text-sm mb-2">{formError}</p>}
+    return (
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border dark:border-gray-700 transition-colors duration-200">
+            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Manajemen Stok Bahan</h2>
+
+            {/* --- Form Tambah Baru --- */}
+            <div className="border dark:border-gray-700 rounded p-4 mb-6 bg-gray-50 dark:bg-gray-700/30">
+                 <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-200">Tambah Bahan Baru</h3>
+                 
+                 {formError && <div className="bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-200 p-2 rounded mb-3 text-sm border border-red-200 dark:border-red-800">{formError}</div>}
+                 
                 <form onSubmit={handleAddItem} className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
-                    <input type="text" name="nama_bahan" value={newItem.nama_bahan} onChange={handleNewItemChange} placeholder="Nama Bahan" className="border rounded px-3 py-2 md:col-span-1" required />
-                    <input type="number" step="0.01" name="stok" value={newItem.stok} onChange={handleNewItemChange} placeholder="Stok Awal" className="border rounded px-3 py-2" required />
-                    <select name="satuan" value={newItem.satuan} onChange={handleNewItemChange} className="border rounded px-3 py-2 bg-white" required>
-                        <option value="">Pilih Satuan...</option>
-                        {SATUAN_BAHAN.map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
-                     <input type="number" name="total_harga" value={newItem.total_harga} onChange={handleNewItemChange} placeholder="Total Harga (Rp)" className="border rounded px-3 py-2" required />
-                    <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Simpan</button>
+                    <div className="md:col-span-1">
+                        <input type="text" name="nama_bahan" value={newItem.nama_bahan} onChange={handleNewItemChange} placeholder="Nama Bahan" className={inputClass} required />
+                    </div>
+                    <div>
+                        <input type="number" step="0.01" name="stok" value={newItem.stok} onChange={handleNewItemChange} placeholder="Stok Awal" className={inputClass} required />
+                    </div>
+                    <div>
+                        <select name="satuan" value={newItem.satuan} onChange={handleNewItemChange} className={inputClass} required>
+                            <option value="">Pilih Satuan...</option>
+                            {SATUAN_BAHAN.map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                    </div>
+                    <div>
+                         <input type="number" name="total_harga" value={newItem.total_harga} onChange={handleNewItemChange} placeholder="Total Modal (Rp)" className={inputClass} required />
+                    </div>
+                    <div>
+                        <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition-colors duration-200 shadow">
+                            Simpan
+                        </button>
+                    </div>
                 </form>
             </div>
 
-            {/* Daftar Bahan */}
-            <h3 className="text-lg font-semibold mb-3">Daftar Stok Bahan</h3>
-            {loading && <p>Loading...</p>}
-            {error && <p className="text-red-500">{error}</p>}
+            {/* --- Daftar Bahan --- */}
+            <h3 className="text-lg font-semibold mb-3 border-b dark:border-gray-700 pb-2 text-gray-800 dark:text-gray-200">Daftar Stok Bahan</h3>
+            
+            {loading && <div className="text-center py-4 text-gray-500 dark:text-gray-400">Loading data...</div>}
+            {error && <div className="text-red-500 text-center py-4">{error}</div>}
+
             {!loading && !error && (
-                <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-700 text-white">
+                <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead className="bg-gray-700 dark:bg-gray-900 text-white">
                             <tr>
-                                <th className="px-4 py-2 text-left">Nama Bahan</th>
-                                <th className="px-4 py-2 text-left">Sisa Stok</th>
-                                <th className="px-4 py-2 text-left">Total Modal</th>
-                                <th className="px-4 py-2 text-left">Kurangi Stok</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Nama Bahan</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Sisa Stok</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Total Modal</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Kurangi Stok</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
+                        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                             {bahanList.map(item => (
-                                <tr key={item._id}>
-                                    <td className="px-4 py-2">{item.nama_bahan}</td>
-                                    <td className="px-4 py-2">{item.stok} {item.satuan}</td>
-                                    <td className="px-4 py-2">{formatCurrency(item.modal_dikeluarkan)}</td>
-                                    <td className="px-4 py-2">
+                                <tr key={item._id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                                    <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">{item.nama_bahan}</td>
+                                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                                        {item.stok} <span className="text-gray-500 dark:text-gray-400 text-xs">{item.satuan}</span>
+                                    </td>
+                                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{formatCurrency(item.modal_dikeluarkan)}</td>
+                                    <td className="px-4 py-3 text-sm">
                                         <div className="flex items-center space-x-2">
                                             <input
                                                 type="number"
                                                 step="0.01"
                                                 value={updateJumlah[item._id] || ''}
                                                 onChange={(e) => handleUpdateJumlahChange(item._id, e.target.value)}
-                                                placeholder="Jumlah Keluar"
-                                                className="border rounded px-2 py-1 w-28 text-sm"
+                                                placeholder="Jml Keluar"
+                                                className="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 w-24 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:border-red-500"
                                             />
                                             <button
                                                 onClick={() => handleUpdateStock(item._id)}
-                                                className="bg-red-500 text-white py-1 px-2 rounded text-xs hover:bg-red-600"
+                                                className="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded text-xs transition-colors duration-200 shadow-sm"
                                             >
                                                 Kurangi
                                             </button>

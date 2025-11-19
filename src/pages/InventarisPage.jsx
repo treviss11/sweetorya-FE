@@ -31,7 +31,7 @@ function InventarisPage() {
         }
         try {
             await createNewAsset(newItem);
-            setNewItem({ nama_barang: '', jumlah: '', kondisi: 'Baik', total_harga: '' }); // Reset form
+            setNewItem({ nama_barang: '', jumlah: '', kondisi: 'Baik', total_harga: '' });
             loadAssets();
             alert('Inventaris baru berhasil ditambahkan.');
         } catch (err) {
@@ -49,7 +49,7 @@ function InventarisPage() {
         }
     };
 
-     const handleDelete = async (itemId) => {
+    const handleDelete = async (itemId) => {
         if (!window.confirm('HANYA GUNAKAN JIKA SALAH INPUT. Yakin hapus permanen?')) return;
         try {
             await deleteAssetApi(itemId);
@@ -60,73 +60,100 @@ function InventarisPage() {
         }
     };
 
-    return (
-        <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold mb-4">Manajemen Inventaris (Aset Tetap)</h2>
+    // Style Class Konsisten
+    const inputClass = "w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:border-blue-500";
 
-            {/* Form Tambah Baru */}
-             <div className="border rounded p-4 mb-6">
-                 <h3 className="text-lg font-semibold mb-3">Tambah Inventaris Baru</h3>
-                 {formError && <p className="text-red-500 text-sm mb-2">{formError}</p>}
+    return (
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border dark:border-gray-700 transition-colors duration-200">
+            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Manajemen Inventaris (Aset Tetap)</h2>
+
+            {/* --- Form Tambah Baru --- */}
+            <div className="border dark:border-gray-700 rounded p-4 mb-6 bg-gray-50 dark:bg-gray-700/30">
+                <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-200">Tambah Inventaris Baru</h3>
+                
+                {formError && <div className="bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-200 p-2 rounded mb-3 text-sm border border-red-200 dark:border-red-800">{formError}</div>}
+                
                 <form onSubmit={handleAddItem} className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
-                    <input type="text" name="nama_barang" value={newItem.nama_barang} onChange={handleNewItemChange} placeholder="Nama Barang" className="border rounded px-3 py-2 md:col-span-1" required />
-                    <input type="number" name="jumlah" value={newItem.jumlah} onChange={handleNewItemChange} placeholder="Jumlah" className="border rounded px-3 py-2" required />
-                    <select name="kondisi" value={newItem.kondisi} onChange={handleNewItemChange} className="border rounded px-3 py-2 bg-white" required>
-                        {KONDISI_OPTIONS.map(k => <option key={k} value={k}>{k}</option>)}
-                    </select>
-                     <input type="number" name="total_harga" value={newItem.total_harga} onChange={handleNewItemChange} placeholder="Total Harga (Rp)" className="border rounded px-3 py-2" required />
-                    <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Simpan</button>
+                    <div className="md:col-span-1">
+                        <input type="text" name="nama_barang" value={newItem.nama_barang} onChange={handleNewItemChange} placeholder="Nama Barang" className={inputClass} required />
+                    </div>
+                    <div>
+                        <input type="number" name="jumlah" value={newItem.jumlah} onChange={handleNewItemChange} placeholder="Jumlah" className={inputClass} required />
+                    </div>
+                    <div>
+                        <select name="kondisi" value={newItem.kondisi} onChange={handleNewItemChange} className={inputClass} required>
+                            {KONDISI_OPTIONS.map(k => <option key={k} value={k}>{k}</option>)}
+                        </select>
+                    </div>
+                    <div>
+                        <input type="number" name="total_harga" value={newItem.total_harga} onChange={handleNewItemChange} placeholder="Total Harga (Rp)" className={inputClass} required />
+                    </div>
+                    <div>
+                        <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition-colors duration-200 shadow">
+                            Simpan
+                        </button>
+                    </div>
                 </form>
             </div>
 
-            {/* Daftar Inventaris */}
-            <h3 className="text-lg font-semibold mb-3">Daftar Inventaris</h3>
-            {loading && <p>Loading...</p>}
-            {error && <p className="text-red-500">{error}</p>}
+            {/* --- Daftar Inventaris --- */}
+            <h3 className="text-lg font-semibold mb-3 border-b dark:border-gray-700 pb-2 text-gray-800 dark:text-gray-200">Daftar Inventaris</h3>
+            
+            {loading && <div className="text-center py-4 text-gray-500 dark:text-gray-400">Loading data...</div>}
+            {error && <div className="text-red-500 text-center py-4">{error}</div>}
+
             {!loading && !error && (
-                 <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-700 text-white">
+                 <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead className="bg-gray-700 dark:bg-gray-900 text-white">
                             <tr>
-                                <th className="px-4 py-2 text-left">Nama Barang</th>
-                                <th className="px-4 py-2 text-left">Jumlah</th>
-                                <th className="px-4 py-2 text-left">Total Modal</th>
-                                <th className="px-4 py-2 text-left">Kondisi</th>
-                                <th className="px-4 py-2 text-left">Aksi</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Nama Barang</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Jumlah</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Total Modal</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Kondisi</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
+                        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                             {assetList.map(item => (
-                                <tr key={item._id} className={`${item.kondisi !== 'Baik' ? 'bg-gray-100' : ''}`}>
-                                    <td className="px-4 py-2">{item.nama_barang}</td>
-                                    <td className="px-4 py-2">{item.jumlah}</td>
-                                    <td className="px-4 py-2">{formatCurrency(item.modal_dikeluarkan)}</td>
-                                     <td className="px-4 py-2">
-                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                            item.kondisi === 'Baik' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                <tr 
+                                    key={item._id} 
+                                    className={`
+                                        transition-colors duration-150
+                                        ${item.kondisi !== 'Baik' ? 'bg-red-50 dark:bg-red-900/20' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}
+                                    `}
+                                >
+                                    <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">{item.nama_barang}</td>
+                                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{item.jumlah}</td>
+                                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{formatCurrency(item.modal_dikeluarkan)}</td>
+                                     <td className="px-4 py-3 text-sm">
+                                        <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                            item.kondisi === 'Baik' 
+                                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                                            : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
                                         }`}>
                                             {item.kondisi}
                                         </span>
                                     </td>
-                                    <td className="px-4 py-2 space-x-1 whitespace-nowrap">
+                                    <td className="px-4 py-3 text-sm space-x-1 whitespace-nowrap font-medium">
                                         {item.kondisi === 'Baik' ? (
                                              <button
                                                 onClick={() => handleUpdateKondisi(item._id, 'Rusak')}
-                                                className="bg-yellow-500 text-white py-1 px-2 rounded text-xs hover:bg-yellow-600"
+                                                className="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-2 rounded text-xs transition-colors shadow-sm"
                                             >
                                                 Rusak?
                                             </button>
                                         ) : (
                                              <button
                                                 onClick={() => handleUpdateKondisi(item._id, 'Baik')}
-                                                className="bg-green-500 text-white py-1 px-2 rounded text-xs hover:bg-green-600"
+                                                className="bg-green-600 hover:bg-green-700 text-white py-1 px-2 rounded text-xs transition-colors shadow-sm"
                                             >
                                                 Baik?
                                             </button>
                                         )}
                                           <button
                                             onClick={() => handleDelete(item._id)}
-                                            className="bg-red-500 text-white py-1 px-2 rounded text-xs hover:bg-red-600"
+                                            className="bg-red-600 hover:bg-red-700 text-white py-1 px-2 rounded text-xs transition-colors shadow-sm ml-2"
                                         >
                                             Delete
                                         </button>
