@@ -6,13 +6,12 @@ const KONDISI_OPTIONS = ['Baik', 'Rusak', 'Hilang'];
 
 function InventarisPage() {
     const [assetList, setAssetList] = useState([]);
-    // State Form (dipakai untuk Create dan Edit)
     const [form, setForm] = useState({ 
         nama_barang: '', jumlah: '', harga_satuan: '', total_harga: '', tgl_pembelian: '', kondisi: 'Baik' 
     });
     
-    const [isEditing, setIsEditing] = useState(false); // Mode Edit?
-    const [editId, setEditId] = useState(null); // ID barang yg diedit
+    const [isEditing, setIsEditing] = useState(false);
+    const [editId, setEditId] = useState(null);
 
     const [searchKeyword, setSearchKeyword] = useState('');
     const [activeSearch, setActiveSearch] = useState('');
@@ -31,8 +30,6 @@ function InventarisPage() {
 
     useEffect(() => { loadAssets(activeSearch); }, [activeSearch]);
 
-    // --- HANDLERS ---
-
     const handleSearch = (e) => { e.preventDefault(); setActiveSearch(searchKeyword); };
     const handleResetSearch = () => { setSearchKeyword(''); setActiveSearch(''); };
 
@@ -40,7 +37,6 @@ function InventarisPage() {
         const { name, value } = e.target;
         setForm(prev => {
             const updated = { ...prev, [name]: value };
-            // Auto hitung total harga saat jumlah/harga satuan berubah
             if (name === 'jumlah' || name === 'harga_satuan') {
                 const qty = name === 'jumlah' ? value : prev.jumlah;
                 const price = name === 'harga_satuan' ? value : prev.harga_satuan;
@@ -50,21 +46,18 @@ function InventarisPage() {
         });
     };
 
-    // Klik tombol Edit di tabel
     const startEdit = (item) => {
         setForm({
             nama_barang: item.nama_barang,
             jumlah: item.jumlah,
             harga_satuan: item.harga_satuan,
             total_harga: item.total_harga,
-            // Format tanggal agar bisa masuk ke input type="date" (YYYY-MM-DD)
             tgl_pembelian: item.tgl_pembelian ? item.tgl_pembelian.split('T')[0] : '',
             kondisi: item.kondisi
         });
         setEditId(item._id);
         setIsEditing(true);
         setFormError('');
-        // Scroll ke atas form
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -83,12 +76,10 @@ function InventarisPage() {
 
         try {
             if (isEditing) {
-                // Mode UPDATE
                 await updateAssetFullApi(editId, form);
                 alert('Data berhasil diperbarui.');
-                cancelEdit(); // Keluar mode edit
+                cancelEdit(); 
             } else {
-                // Mode CREATE
                 await createNewAsset(form);
                 alert('Inventaris baru berhasil ditambahkan.');
                 setForm({ nama_barang: '', jumlah: '', harga_satuan: '', total_harga: '', tgl_pembelian: '', kondisi: 'Baik' });
@@ -120,8 +111,6 @@ function InventarisPage() {
     return (
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border dark:border-gray-700 transition-colors duration-200">
             <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Manajemen Aset</h2>
-
-            {/* --- FORM (Create & Edit) --- */}
             <div className={`border dark:border-gray-700 rounded p-5 mb-8 ${isEditing ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200' : 'bg-gray-50 dark:bg-gray-700/30'}`}>
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">
@@ -175,7 +164,6 @@ function InventarisPage() {
                 </form>
             </div>
 
-            {/* --- Search & Table --- */}
             <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Daftar Aset</h3>
                 <form onSubmit={handleSearch} className="flex gap-2 w-full md:w-auto">
@@ -223,7 +211,6 @@ function InventarisPage() {
                                         <button onClick={() => handleDelete(item._id)} className="bg-red-100 hover:bg-red-200 text-red-700 px-2 py-1 rounded text-xs">
                                             🗑️ Hapus
                                         </button>
-                                        {/* Tombol Quick Status (Opsional, bisa dihapus kalau sempit) */}
                                         {item.kondisi === 'Baik' && (
                                             <button onClick={() => handleUpdateKondisi(item._id, 'Rusak')} className="text-xs text-yellow-600 hover:underline ml-2">
                                                     Rusak
