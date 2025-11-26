@@ -1,16 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { fetchPackaging, createNewPackaging, updatePackagingStockApi } from '../services/api';
+import { 
+    fetchPackaging, 
+    createNewPackaging, 
+    updatePackagingStockApi, 
+    updatePackagingApi, 
+    deletePackagingApi 
+} from '../services/api';
 
 const formatCurrency = (amount) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
 const SATUAN_PACKAGING = ['pcs', 'lembar', 'biji'];
 
 function PackagingPage() {
     const [packagingList, setPackagingList] = useState([]);
-    
     const [newItem, setNewItem] = useState({ 
         nama_packaging: '', stok: '', satuan: '', total_harga: '',
         tgl_beli: '', supplier: '' 
     });
+    const [isEditing, setIsEditing] = useState(false);
+    const [editId, setEditId] = useState(null);
 
     const [updateJumlah, setUpdateJumlah] = useState({});
     const [searchKeyword, setSearchKeyword] = useState('');
@@ -37,23 +44,59 @@ function PackagingPage() {
     const handleResetSearch = () => { setSearchKeyword(''); setActiveSearch(''); };
     const handleNewItemChange = (e) => setNewItem({ ...newItem, [e.target.name]: e.target.value });
     const handleUpdateJumlahChange = (itemId, value) => setUpdateJumlah({ ...updateJumlah, [itemId]: value });
+    const handleEditClick = (item) => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setIsEditing(true);
+        setEditId(item._id);
+        setNewItem({
+            nama_packaging: item.nama_packaging,
+            stok: item.stok,
+            satuan: item.satuan,
+            total_harga: item.modal_dikeluarkan,
+            tgl_beli: item.tgl_beli ? item.tgl_beli.split('T')[0] : '',
+            supplier: item.supplier
+        });
+    };
 
-    const handleAddItem = async (e) => {
+    const handleCancelEdit = () => {
+        setIsEditing(false);
+        setEditId(null);
+        setNewItem({ nama_packaging: '', stok: '', satuan: '', total_harga: '', tgl_beli: '', supplier: '' });
+        setFormError('');
+    };
+
+    const handleFormSubmit = async (e) => {
         e.preventDefault(); setFormError('');
         
         if (!newItem.nama_packaging || !newItem.stok || !newItem.satuan || !newItem.total_harga || !newItem.tgl_beli) {
-            setFormError('Nama, stok, satuan, harga, dan tgl beli wajib diisi.'); return;
+            setFormError('Semua field bertanda wajib diisi.'); return;
         }
 
         try {
-            const res = await createNewPackaging(newItem);
-            setNewItem({ nama_packaging: '', stok: '', satuan: '', total_harga: '', tgl_beli: '', supplier: '' });
+            if (isEditing) {
+                await updatePackagingApi(editId, newItem);
+                alert('Data packaging berhasil diperbarui.');
+                handleCancelEdit();
+            } else {
+                await createNewPackaging(newItem);
+                alert('Packaging baru berhasil dicatat.');
+                setNewItem({ nama_packaging: '', stok: '', satuan: '', total_harga: '', tgl_beli: '', supplier: '' });
+            }
             loadPackaging(activeSearch);
-            alert(res.data.msg || 'Packaging berhasil disimpan.');
         } catch (err) {
-            setFormError(err.response?.data?.msg || 'Gagal menambahkan packaging.');
+            setFormError(err.response?.data?.msg || 'Gagal menyimpan data.');
         }
     };
+
+    const handleDelete = async (id) => {
+        if(!window.confirm("Yakin hapus data ini? Data yang dihapus tidak bisa dikembalikan.")) return;
+        try {
+            await deletePackagingApi(id);
+            loadPackaging(activeSearch);
+        } catch (err) {
+            alert('Gagal menghapus data.');
+        }
+    }
 
     const handleUpdateStock = async (itemId) => {
         const jumlahKeluar = updateJumlah[itemId];
@@ -76,16 +119,19 @@ function PackagingPage() {
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border dark:border-gray-700 transition-colors duration-200">
             <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Manajemen Stok Packaging</h2>
 
-            <div className="border dark:border-gray-700 rounded p-4 mb-8 bg-gray-50 dark:bg-gray-700/30">
-                 <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-200">Input Packaging (Baru / Restock)</h3>
-                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
-                    Setiap input akan dicatat sebagai data baru (History Pembelian). 
-                    Nama packaging boleh sama.
-                 </p>
+            <div className={`border dark:border-gray-700 rounded p-4 mb-8 ${isEditing ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200' : 'bg-gray-50 dark:bg-gray-700/30'}`}>
+                 <div className="flex justify-between items-center mb-3">
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                        {isEditing ? '✏️ Edit Data Packaging' : '➕ Input Packaging Baru'}
+                    </h3>
+                    {isEditing && (
+                        <button onClick={handleCancelEdit} className="text-sm text-red-500 hover:underline">Batal Edit</button>
+                    )}
+                 </div>
                  
                  {formError && <div className="bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-200 p-2 rounded mb-3 text-sm border border-red-200 dark:border-red-800">{formError}</div>}
                  
-                <form onSubmit={handleAddItem} className="grid grid-cols-1 md:grid-cols-6 gap-4">
+                <form onSubmit={handleFormSubmit} className="grid grid-cols-1 md:grid-cols-6 gap-4">
                     <div className="md:col-span-2">
                         <label className={labelClass}>Nama Packaging</label>
                         <input type="text" name="nama_packaging" value={newItem.nama_packaging} onChange={handleNewItemChange} placeholder="Contoh: Box 20x20" className={inputClass} required />
@@ -97,7 +143,7 @@ function PackagingPage() {
                     </div>
 
                     <div className="md:col-span-1">
-                        <label className={labelClass}>Stok Masuk</label>
+                        <label className={labelClass}>{isEditing ? 'Stok (Total)' : 'Stok Masuk'}</label>
                         <input type="number" name="stok" value={newItem.stok} onChange={handleNewItemChange} placeholder="0" className={inputClass} required />
                     </div>
 
@@ -120,8 +166,8 @@ function PackagingPage() {
                     </div>
 
                     <div className="md:col-span-4 flex items-end">
-                        <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded font-bold shadow transition-colors duration-200">
-                            Simpan / Restock
+                        <button type="submit" className={`w-full py-2 px-4 rounded shadow font-bold text-white ${isEditing ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-blue-600 hover:bg-blue-700'}`}>
+                            {isEditing ? 'Update Data' : 'Simpan Data'}
                         </button>
                     </div>
                 </form>
@@ -145,18 +191,19 @@ function PackagingPage() {
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead className="bg-gray-700 dark:bg-gray-900 text-white">
                             <tr>
-                                <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider">Tgl Beli</th>
-                                <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider">Supplier</th>
-                                <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider">Nama Packaging</th>
-                                <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider">Sisa Stok</th>
-                                <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider">Total Modal</th>
-                                <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider">Kurangi Stok</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Tgl Beli</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Supplier</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Nama Packaging</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Sisa Stok</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Total Modal</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Kurangi Stok</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                             {packagingList.length === 0 ? (
                                 <tr>
-                                    <td colSpan="6" className="px-4 py-4 text-center text-gray-500 dark:text-gray-400">Belum ada data packaging.</td>
+                                    <td colSpan="7" className="px-4 py-4 text-center text-gray-500 dark:text-gray-400">Belum ada data packaging.</td>
                                 </tr>
                             ) : (
                                 packagingList.map(item => (
@@ -188,6 +235,15 @@ function PackagingPage() {
                                                     Kurangi
                                                 </button>
                                             </div>
+                                        </td>
+
+                                        <td className="px-4 py-3 text-center space-x-2 whitespace-nowrap">
+                                            <button onClick={() => handleEditClick(item)} className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-xs font-bold border border-blue-200 dark:border-blue-800 px-2 py-1 rounded">
+                                                Edit
+                                            </button>
+                                            <button onClick={() => handleDelete(item._id)} className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-xs font-bold border border-red-200 dark:border-red-800 px-2 py-1 rounded">
+                                                Hapus
+                                            </button>
                                         </td>
                                     </tr>
                                 ))

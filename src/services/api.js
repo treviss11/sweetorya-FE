@@ -23,11 +23,15 @@ export const fetchSummary = () => api.get('/orders/summary');
 export const fetchBahan = (search = '') => api.get(`/bahan?search=${search}`);
 export const createNewBahan = (bahanData) => api.post('/bahan', bahanData);
 export const updateBahanStockApi = (bahanId, stockData) => api.patch(`/bahan/${bahanId}/stock`, stockData);
+export const updateBahanApi = (id, data) => api.put(`/bahan/${id}`, data);
+export const deleteBahanApi = (id) => api.delete(`/bahan/${id}`);
 
 // --- Packaging API Calls ---
 export const fetchPackaging = (search = '') => api.get(`/packaging?search=${search}`);
 export const createNewPackaging = (packagingData) => api.post('/packaging', packagingData);
 export const updatePackagingStockApi = (packagingId, stockData) => api.patch(`/packaging/${packagingId}/stock`, stockData);
+export const updatePackagingApi = (id, data) => api.put(`/packaging/${id}`, data);
+export const deletePackagingApi = (id) => api.delete(`/packaging/${id}`);
 
 // --- Asset (Inventaris) API Calls ---
 export const fetchAssets = (search = '') => api.get(`/inventaris?search=${search}`);
