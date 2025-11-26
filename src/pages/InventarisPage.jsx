@@ -192,12 +192,12 @@ function InventarisPage() {
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead className="bg-gray-700 dark:bg-gray-900 text-white">
                             <tr>
-                                <th className="px-4 py-3 text-left text-xs font-medium uppercase">Tgl Beli</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium uppercase">Nama Barang</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium uppercase">Qty</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium uppercase">@ Harga</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium uppercase">Total</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium uppercase">Kondisi</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Tgl Beli</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Nama Barang</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Qty</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">@ Harga</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Total</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Kondisi</th>
                                 <th className="px-4 py-3 text-center text-xs font-medium uppercase">Aksi</th>
                             </tr>
                         </thead>
@@ -226,7 +226,7 @@ function InventarisPage() {
                                         {/* Tombol Quick Status (Opsional, bisa dihapus kalau sempit) */}
                                         {item.kondisi === 'Baik' && (
                                             <button onClick={() => handleUpdateKondisi(item._id, 'Rusak')} className="text-xs text-yellow-600 hover:underline ml-2">
-                                                Set Rusak
+                                                    Rusak
                                             </button>
                                         )}
                                     </td>
