@@ -158,7 +158,7 @@ function InventarisPage() {
 
                     <div className="md:col-span-5 flex items-end">
                         <button type="submit" className={`w-full py-2 px-4 rounded font-bold text-white shadow ${isEditing ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-blue-600 hover:bg-blue-700'}`}>
-                            {isEditing ? 'Update Data' : 'Simpan'}
+                            {isEditing ? 'Update Data' : 'Simpan Data'}
                         </button>
                     </div>
                 </form>
