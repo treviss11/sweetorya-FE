@@ -138,12 +138,12 @@ function BahanPage() {
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead className="bg-gray-700 dark:bg-gray-900 text-white">
                             <tr>
-                                <th className="px-4 py-3 text-left text-xs font-medium uppercase">Tgl Beli</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium uppercase">Supplier</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium uppercase">Nama Bahan</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium uppercase">Sisa Stok</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium uppercase">Total Modal</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium uppercase">Kurangi Stok</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Tgl Beli</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Supplier</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Nama Bahan</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Sisa Stok</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Total Modal</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Kurangi Stok</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
