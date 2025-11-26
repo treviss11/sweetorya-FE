@@ -212,7 +212,7 @@ function InventarisPage() {
                                             Hapus
                                         </button>
                                         {item.kondisi === 'Baik' && (
-                                            <button onClick={() => handleUpdateKondisi(item._id, 'Rusak')} className="text-xs text-yellow-600 hover:underline ml-2">
+                                            <button onClick={() => handleUpdateKondisi(item._id, 'Rusak')} className="text-xs text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-300 ml-2 font-bold border border-yellow-200 px-2 py-1 rounded dark:border-yellow-800">
                                                     Rusak
                                             </button>
                                         )}
