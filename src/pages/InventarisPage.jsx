@@ -205,11 +205,11 @@ function InventarisPage() {
                                         </span>
                                     </td>
                                     <td className="px-4 py-3 text-center space-x-2 whitespace-nowrap">
-                                        <button onClick={() => startEdit(item)} className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-2 py-1 rounded text-xs">
-                                            ✏️ Edit
+                                        <button onClick={() => startEdit(item)} className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-xs font-bold border border-blue-200 dark:border-blue-800 px-2 py-1 rounded">
+                                            Edit
                                         </button>
-                                        <button onClick={() => handleDelete(item._id)} className="bg-red-100 hover:bg-red-200 text-red-700 px-2 py-1 rounded text-xs">
-                                            🗑️ Hapus
+                                        <button onClick={() => handleDelete(item._id)} className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-xs font-bold border border-red-200 dark:border-red-800 px-2 py-1 rounded">
+                                            Hapus
                                         </button>
                                         {item.kondisi === 'Baik' && (
                                             <button onClick={() => handleUpdateKondisi(item._id, 'Rusak')} className="text-xs text-yellow-600 hover:underline ml-2">
