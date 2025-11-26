@@ -79,7 +79,8 @@ function PackagingPage() {
             <div className="border dark:border-gray-700 rounded p-4 mb-8 bg-gray-50 dark:bg-gray-700/30">
                  <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-200">Input Packaging (Baru / Restock)</h3>
                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
-                    Jika nama packaging sudah ada, stok dan harga akan <b>ditambahkan</b> ke data lama (Restock).
+                    Setiap input akan dicatat sebagai data baru (History Pembelian). 
+                    Nama packaging boleh sama.
                  </p>
                  
                  {formError && <div className="bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-200 p-2 rounded mb-3 text-sm border border-red-200 dark:border-red-800">{formError}</div>}
@@ -144,12 +145,12 @@ function PackagingPage() {
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead className="bg-gray-700 dark:bg-gray-900 text-white">
                             <tr>
-                                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Tgl Beli</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Supplier</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Nama Packaging</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Sisa Stok</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Total Modal</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Kurangi Stok</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider">Tgl Beli</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider">Supplier</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider">Nama Packaging</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider">Sisa Stok</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider">Total Modal</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider">Kurangi Stok</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">

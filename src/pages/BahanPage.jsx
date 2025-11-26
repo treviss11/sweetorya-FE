@@ -74,7 +74,8 @@ function BahanPage() {
             <div className="border dark:border-gray-700 rounded p-4 mb-8 bg-gray-50 dark:bg-gray-700/30">
                  <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-200">Input Bahan (Baru / Restock)</h3>
                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
-                    Jika nama bahan sudah ada, stok dan harga akan <b>ditambahkan</b> ke data lama (Restock).
+                    Setiap input akan dicatat sebagai data baru (History Pembelian). 
+                    Nama barang boleh sama jika harga atau tanggal belinya berbeda.
                  </p>
                  
                  {formError && <div className="bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-200 p-2 rounded mb-3 text-sm">{formError}</div>}
