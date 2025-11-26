@@ -32,6 +32,7 @@ export const updatePackagingStockApi = (packagingId, stockData) => api.patch(`/p
 // --- Asset (Inventaris) API Calls ---
 export const fetchAssets = (search = '') => api.get(`/inventaris?search=${search}`);
 export const createNewAsset = (assetData) => api.post('/inventaris', assetData);
+export const updateAssetFullApi = (id, data) => api.put(`/inventaris/${id}`, data);
 export const updateAssetKondisiApi = (assetId, kondisiData) => api.patch(`/inventaris/${assetId}/kondisi`, kondisiData);
 export const deleteAssetApi = (assetId) => api.delete(`/inventaris/${assetId}`);
 
