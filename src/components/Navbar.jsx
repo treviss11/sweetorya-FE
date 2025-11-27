@@ -1,8 +1,9 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Label diperpendek sedikit agar muat rapi di HP
   const navItems = [
@@ -12,6 +13,13 @@ function Navbar() {
     { path: '/packaging', label: 'Pack', icon: '🛍️' },
     { path: '/inventaris', label: 'Aset', icon: '🛠️' },
   ];
+
+  const handleLogout = () => {
+    if(window.confirm("Yakin ingin keluar?")) {
+        localStorage.removeItem('token'); // Hapus kunci
+        navigate('/login'); // Tendang ke login
+    }
+  };
 
   return (
     <nav className="bg-gray-800 dark:bg-black text-white p-3 fixed top-0 left-0 right-0 z-50 shadow-md border-b border-gray-700 transition-colors duration-200">
@@ -46,6 +54,16 @@ function Navbar() {
             );
           })}
         </ul>
+
+        <div className="flex items-center ml-2 space-x-2">
+            {/* TOMBOL LOGOUT BARU */}
+            <button 
+                onClick={handleLogout}
+                className="bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-2 px-3 rounded border border-gray-500"
+            >
+                🚪 Logout
+            </button>
+        </div>  
 
       </div>
     </nav>
