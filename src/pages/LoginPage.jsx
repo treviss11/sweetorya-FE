@@ -31,7 +31,7 @@ function LoginPage() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-900">
             <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md border border-gray-700">
-                <h2 className="text-2xl font-bold text-white mb-6 text-center">Sweetorya Login</h2>
+                <h2 className="text-2xl font-bold text-white mb-6 text-center">Login</h2>
                 
                 {error && <div className="bg-red-500/20 text-red-200 p-3 rounded mb-4 text-sm border border-red-500/50">{error}</div>}
 
