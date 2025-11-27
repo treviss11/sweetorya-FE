@@ -11,14 +11,15 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200">
       <Navbar />
-      <main className="container mx-auto p-4 pt-20"> {/* pt-20 untuk memberi ruang di bawah navbar fixed */}
+      <main className="container mx-auto p-4 pt-20"> 
         <Routes>
           <Route path="/" element={<RekapPage />} />
           <Route path="/pesan" element={<OrderFormPage />} />
           <Route path="/bahan" element={<BahanPage />} />
           <Route path="/packaging" element={<PackagingPage />} />
           <Route path="/inventaris" element={<InventarisPage />} />
-          {/* Tambahkan rute lain jika perlu */}
+          <Route path="/pesan/edit/:id" element={<OrderFormPage />} /> 
+          <Route path="/pesan/detail/:id" element={<OrderDetailPage />} />
         </Routes>
       </main>
     </div>

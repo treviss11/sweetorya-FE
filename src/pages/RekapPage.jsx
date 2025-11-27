@@ -359,6 +359,9 @@ function RekapPage() {
                                                 💰 Lunas
                                             </button>
                                         )}
+                                        <Link to={`/pesan/detail/${order._id}`} className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-1 px-2 rounded text-xs w-full block text-center mt-1">
+                                            📄 Detail
+                                        </Link>
                                     </td>
                                 </tr>
                             ))}

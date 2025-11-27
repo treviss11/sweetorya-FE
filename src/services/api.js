@@ -11,10 +11,12 @@ const api = axios.create({
 });
 
 // --- Order API Calls ---
-export const fetchOrders = (page = 1, limit = 20, search = '') => {
-    return api.get(`/orders?page=${page}&limit=${limit}&search=${search}`);
-};
+export const fetchOrders = (page = 1, limit = 20, search = '') => api.get(`/orders?page=${page}&limit=${limit}&search=${search}`);
+export const fetchOrderById = (id) => api.get(`/orders/${id}`); 
 export const createNewOrder = (orderData) => api.post('/orders', orderData);
+export const updateOrderApi = (id, orderData) => api.put(`/orders/${id}`, orderData); 
+export const deleteOrderApi = (id) => api.delete(`/orders/${id}`); 
+export const fetchSuggestions = () => api.get('/orders/suggestions'); 
 export const updateOrderStatusApi = (orderId, statusData) => api.patch(`/orders/${orderId}/status`, statusData);
 export const updateOrderTestimonialApi = (orderId, testimonialData) => api.patch(`/orders/${orderId}/testimonial`, testimonialData);
 export const fetchSummary = () => api.get('/orders/summary');
