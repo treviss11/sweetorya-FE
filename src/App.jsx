@@ -6,6 +6,7 @@ import OrderFormPage from './pages/OrderFormPage';
 import BahanPage from './pages/BahanPage';
 import PackagingPage from './pages/PackagingPage';
 import InventarisPage from './pages/InventarisPage';
+import OrderDetailPage from './pages/OrderDetailPage';
 
 function App() {
   return (
