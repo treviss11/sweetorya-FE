@@ -8,7 +8,7 @@ import {
 } from '../services/api';
 
 const formatCurrency = (amount) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
-const SATUAN_PACKAGING = ['pcs', 'lembar', 'biji'];
+const SATUAN_PACKAGING = ['pcs', 'lembar', 'biji', 'pack', 'roll', 'kotak'];
 
 function PackagingPage() {
     const [packagingList, setPackagingList] = useState([]);

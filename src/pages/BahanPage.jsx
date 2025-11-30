@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { fetchBahan, createNewBahan, updateBahanStockApi, updateBahanApi, deleteBahanApi } from '../services/api';
 
 const formatCurrency = (amount) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
-const SATUAN_BAHAN = ['ltr', 'kg', 'gr', 'cc', 'ml', 'pack', 'biji', 'pcs', 'lembar'];
+const SATUAN_BAHAN = ['ltr', 'kg', 'gr', 'cc', 'ml', 'pack', 'biji', 'pcs', 'lembar', 'botol', 'kotak'];
 
 function BahanPage() {
     const [bahanList, setBahanList] = useState([]);
