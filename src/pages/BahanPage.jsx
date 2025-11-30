@@ -46,7 +46,7 @@ function BahanPage() {
         setEditId(item._id);
         setNewItem({
             nama_bahan: item.nama_bahan,
-            stok: item.stok,
+            stok: item.stok_awal,
             satuan: item.satuan,
             total_harga: item.modal_dikeluarkan,
             tgl_beli: item.tgl_beli ? item.tgl_beli.split('T')[0] : '',
@@ -182,29 +182,48 @@ function BahanPage() {
                         <thead className="bg-gray-700 dark:bg-gray-900 text-white">
                             <tr>
                                 <th className="px-4 py-3 text-center text-xs font-medium uppercase">Tgl</th>
+                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Supplier</th>
                                 <th className="px-4 py-3 text-center text-xs font-medium uppercase">Barang</th>
-                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Stok</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium uppercase">Stok Awal</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium uppercase">Sisa</th> 
                                 <th className="px-4 py-3 text-center text-xs font-medium uppercase">Modal</th>
                                 <th className="px-4 py-3 text-center text-xs font-medium uppercase">Kurangi Stok</th>
                                 <th className="px-4 py-3 text-center text-xs font-medium uppercase">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                            {bahanList.map(item => (
-                                <tr key={item._id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
-                                    <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                                        {item.tgl_beli ? new Date(item.tgl_beli).toLocaleDateString('id-ID') : '-'}
-                                    </td>
-                                    <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">
-                                        {item.nama_bahan}
-                                        <div className="text-xs text-gray-500 font-normal">{item.supplier}</div>
-                                    </td>
-                                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
-                                        {item.stok} <span className="text-gray-500 text-xs">{item.satuan}</span>
-                                    </td>
-                                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{formatCurrency(item.modal_dikeluarkan)}</td>
-                                    
-                                    <td className="px-4 py-3 text-sm">
+                            {bahanList.map(item => {
+                            const percentage = item.stok_awal > 0 ? (item.stok_sisa / item.stok_awal) * 100 : 0;
+                            let statusColor = 'bg-green-500';
+                            if (percentage < 30) statusColor = 'bg-red-500';
+                            else if (percentage < 70) statusColor = 'bg-yellow-500';
+
+                            return (
+                            <tr key={item._id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                                <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                                    {item.tgl_beli ? new Date(item.tgl_beli).toLocaleDateString('id-ID') : '-'}
+                                </td>
+                                <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400 text-center">
+                                    {item.supplier || '-'}
+                                </td>
+                                <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">
+                                    {item.nama_bahan}
+                                </td>
+                                <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                                    {item.stok_awal} <span className="text-xs">{item.satuan}</span>
+                                </td>
+                                <td className="px-4 py-3 text-sm font-bold text-gray-900 dark:text-white">
+                                    {item.stok_sisa} <span className="text-xs font-normal text-gray-500">{item.satuan}</span>
+                                    <div className="w-16 h-1.5 bg-gray-200 dark:bg-gray-600 rounded-full mt-1">
+                                        <div 
+                                            className={`h-1.5 rounded-full ${statusColor}`} 
+                                            style={{ width: `${percentage}%` }}
+                                        ></div>
+                                    </div>
+                                </td>
+                                <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{formatCurrency(item.modal_dikeluarkan)}</td>
+                                <td className="px-4 py-3 text-sm">
+                                    {item.stok_sisa > 0 ? (
                                         <div className="flex items-center space-x-2">
                                             <input
                                                 type="number" step="0.01"
@@ -213,22 +232,26 @@ function BahanPage() {
                                                 placeholder="Keluar"
                                                 className="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 w-16 text-xs bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                                             />
-                                            <button onClick={() => handleUpdateStock(item._id)} className="bg-red-600 hover:bg-red-700 text-white py-1 px-2 rounded text-xs">
+                                            <button onClick={() => handleUpdateStock(item._id)} className="bg-red-600 hover:bg-red-700 text-white py-1 px-2 rounded text-xs shadow-sm">
                                                 Go
                                             </button>
                                         </div>
-                                    </td>
+                                    ) : (
+                                        <span className="text-xs text-red-500 font-bold italic">Habis</span>
+                                    )}
+                                </td>
 
-                                    <td className="px-4 py-3 text-center space-x-2 whitespace-nowrap">
-                                        <button onClick={() => handleEditClick(item)} className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-xs font-bold border border-blue-200 dark:border-blue-800 px-2 py-1 rounded">
-                                            Edit
-                                        </button>
-                                        <button onClick={() => handleDelete(item._id)} className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-xs font-bold border border-red-200 dark:border-red-800 px-2 py-1 rounded">
-                                            Hapus
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                                <td className="px-4 py-3 text-center space-x-2 whitespace-nowrap">
+                                    <button onClick={() => handleEditClick(item)} className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-xs font-bold border border-blue-200 dark:border-blue-800 px-2 py-1 rounded">
+                                        Edit
+                                    </button>
+                                    <button onClick={() => handleDelete(item._id)} className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-xs font-bold border border-red-200 dark:border-red-800 px-2 py-1 rounded">
+                                        Hapus
+                                    </button>
+                                </td>
+                            </tr>
+                            )
+                        })}
                         </tbody>
                     </table>
                 </div>

@@ -194,7 +194,8 @@ function PackagingPage() {
                                 <th className="px-4 py-3 text-center text-xs font-medium uppercase">Tgl Beli</th>
                                 <th className="px-4 py-3 text-center text-xs font-medium uppercase">Supplier</th>
                                 <th className="px-4 py-3 text-center text-xs font-medium uppercase">Nama Packaging</th>
-                                <th className="px-4 py-3 text-center text-xs font-medium uppercase">Sisa Stok</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium uppercase">Stok Awal</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium uppercase">Sisa</th>
                                 <th className="px-4 py-3 text-center text-xs font-medium uppercase">Total Modal</th>
                                 <th className="px-4 py-3 text-center text-xs font-medium uppercase">Kurangi Stok</th>
                                 <th className="px-4 py-3 text-center text-xs font-medium uppercase">Aksi</th>
@@ -206,37 +207,59 @@ function PackagingPage() {
                                     <td colSpan="7" className="px-4 py-4 text-center text-gray-500 dark:text-gray-400">Belum ada data packaging.</td>
                                 </tr>
                             ) : (
-                                packagingList.map(item => (
+                                packagingList.map(item => {
+                                    const percentage = item.stok_awal > 0 ? (item.stok_sisa / item.stok_awal) * 100 : 0;
+                                    let statusColor = 'bg-green-500';
+                                    if (percentage < 30) statusColor = 'bg-red-500';
+                                    else if (percentage < 70) statusColor = 'bg-yellow-500';
+
+                                    return (
                                     <tr key={item._id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
-                                        <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                                        <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap text-center">
                                             {item.tgl_beli ? new Date(item.tgl_beli).toLocaleDateString('id-ID') : '-'}
                                         </td>
-                                        <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400">
+                                        <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400 text-center">
                                             {item.supplier || '-'}
                                         </td>
-                                        <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">{item.nama_packaging}</td>
-                                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
-                                            {item.stok} <span className="text-gray-500 dark:text-gray-400 text-xs">{item.satuan}</span>
+                                        <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white text-center">{item.nama_packaging}</td>
+                                        {/* Stok Awal */}
+                                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                                            {item.stok_awal} <span className="text-xs">{item.satuan}</span>
+                                        </td>
+
+                                        {/* Stok Sisa (Visual) */}
+                                        <td className="px-4 py-3 text-sm font-bold text-gray-900 dark:text-white">
+                                            {item.stok_sisa} <span className="text-xs font-normal text-gray-500">{item.satuan}</span>
+                                            {/* Progress Bar */}
+                                            <div className="w-20 h-1.5 bg-gray-200 dark:bg-gray-600 rounded-full mt-1">
+                                                <div 
+                                                    className={`h-1.5 rounded-full ${statusColor}`} 
+                                                    style={{ width: `${percentage}%` }}
+                                                ></div>
+                                            </div>
                                         </td>
                                         <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{formatCurrency(item.modal_dikeluarkan)}</td>
                                         <td className="px-4 py-3 text-sm">
-                                            <div className="flex items-center space-x-2">
-                                                <input
-                                                    type="number"
-                                                    value={updateJumlah[item._id] || ''}
-                                                    onChange={(e) => handleUpdateJumlahChange(item._id, e.target.value)}
-                                                    placeholder="Keluar"
-                                                    className="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 w-20 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:border-red-500"
-                                                />
-                                                <button
-                                                    onClick={() => handleUpdateStock(item._id)}
-                                                    className="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded text-xs transition-colors duration-200 shadow-sm"
-                                                >
-                                                    Kurangi
-                                                </button>
-                                            </div>
+                                            {item.stok_sisa > 0 ? (
+                                                <div className="flex items-center space-x-2">
+                                                    <input
+                                                        type="number"
+                                                        value={updateJumlah[item._id] || ''}
+                                                        onChange={(e) => handleUpdateJumlahChange(item._id, e.target.value)}
+                                                        placeholder="Keluar"
+                                                        className="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 w-16 text-xs bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:border-red-500"
+                                                    />
+                                                    <button
+                                                        onClick={() => handleUpdateStock(item._id)}
+                                                        className="bg-red-600 hover:bg-red-700 text-white py-1 px-2 rounded text-xs transition-colors duration-200 shadow-sm"
+                                                    >
+                                                        Kurangi
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <span className="text-xs text-red-500 font-bold italic">Habis</span>
+                                            )}
                                         </td>
-
                                         <td className="px-4 py-3 text-center space-x-2 whitespace-nowrap">
                                             <button onClick={() => handleEditClick(item)} className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-xs font-bold border border-blue-200 dark:border-blue-800 px-2 py-1 rounded">
                                                 Edit
@@ -246,7 +269,7 @@ function PackagingPage() {
                                             </button>
                                         </td>
                                     </tr>
-                                ))
+                                )})
                             )}
                         </tbody>
                     </table>
