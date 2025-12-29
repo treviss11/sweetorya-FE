@@ -12,8 +12,8 @@ function RekapPage() {
     const [orders, setOrders] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [searchKeyword, setSearchKeyword] = useState(''); // State input user
-    const [activeSearch, setActiveSearch] = useState('');   // State yang dikirim ke API
+    const [searchKeyword, setSearchKeyword] = useState(''); 
+    const [activeSearch, setActiveSearch] = useState('');   
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [testimonialLinks, setTestimonialLinks] = useState({}); 
@@ -22,12 +22,27 @@ function RekapPage() {
         setLoading(true);
         setError(null);
         try {
-            // Kita pisah call-nya. Summary tidak perlu search, tapi Orders perlu.
-            const summaryRes = await fetchSummary(); // Selalu ambil summary total
-            const ordersRes = await fetchOrders(page, 20, search); // Ambil orders dengan filter search
+            const summaryRes = await fetchSummary(); 
+            const ordersRes = await fetchOrders(page, 20, search); 
 
             setSummary(summaryRes.data);
-            setOrders(ordersRes.data.orders);
+            
+            // --- LOGIKA SORTING (BARU) ---
+            // Pisahkan logika: Belum Selesai di atas, Selesai di bawah.
+            // Jika status sama, urutkan berdasarkan tanggal terbaru.
+            const sortedOrders = ordersRes.data.orders.sort((a, b) => {
+                const isFinishedA = a.status_pesanan === 'Selesai';
+                const isFinishedB = b.status_pesanan === 'Selesai';
+
+                if (isFinishedA !== isFinishedB) {
+                    // Jika A belum selesai (false) dan B selesai (true), A harus di atas (-1)
+                    return isFinishedA ? 1 : -1;
+                }
+                // Jika status sama, urutkan tanggal (descending / terbaru diatas)
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+
+            setOrders(sortedOrders);
             setCurrentPage(ordersRes.data.currentPage);
             setTotalPages(ordersRes.data.totalPages);
 
@@ -50,11 +65,10 @@ function RekapPage() {
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
-        setCurrentPage(1); // Reset ke halaman 1 setiap kali search baru
-        setActiveSearch(searchKeyword); // Trigger useEffect
+        setCurrentPage(1); 
+        setActiveSearch(searchKeyword); 
     };
 
-    // Handler Tombol Reset
     const handleResetSearch = () => {
         setSearchKeyword('');
         setActiveSearch('');
@@ -116,7 +130,6 @@ function RekapPage() {
     const tableInputClass = "border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-xs w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 transition-colors";
 
     return (
-        // CONTAINER UTAMA DIPERLEBAR (max-w-[98%] atau w-full)
         <div className="w-full max-w-[100%] mx-auto px-2 md:px-4 pb-20">
             
             {/* Header Section */}
@@ -137,7 +150,7 @@ function RekapPage() {
                 </div>
             </div>
 
-            {/* Summary Cards (Grid 4 Kolom) */}
+            {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 {/* Card 1 */}
                 <div className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-md border-l-4 border-green-500 flex flex-col justify-between">
@@ -175,7 +188,7 @@ function RekapPage() {
                 </div>
             </div>
 
-            {/* Rincian Pengeluaran (Accordion Style Box) */}
+            {/* Rincian Pengeluaran */}
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 mb-8 overflow-hidden">
                 <div className="px-6 py-4 border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
                     <h4 className="font-bold text-gray-700 dark:text-gray-200">Rincian Modal & Pengeluaran</h4>
@@ -229,7 +242,6 @@ function RekapPage() {
                             <tr>
                                 <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider w-24">ID</th>
                                 <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider w-48">Pemesan</th>
-                                {/* Kolom Detail dilebarkan */}
                                 <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider min-w-[250px]">Detail Item</th>
                                 <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider min-w-[200px]">Pengiriman</th>
                                 <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider w-48">Testimoni</th>
@@ -239,7 +251,16 @@ function RekapPage() {
                         </thead>
                         <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                             {orders.map((order) => (
-                                <tr key={order._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                                <tr 
+                                    key={order._id} 
+                                    // --- LOGIKA BACKGROUND WARNA DI SINI ---
+                                    // Jika belum selesai, warna pink. Jika sudah selesai, warna default (putih/gelap).
+                                    className={`transition-colors border-b dark:border-gray-700 ${
+                                        order.status_pesanan !== 'Selesai' 
+                                        ? 'bg-pink-50 dark:bg-red-900/20 hover:bg-pink-100 dark:hover:bg-red-900/30' 
+                                        : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                                    }`}
+                                >
                                     
                                     {/* ID */}
                                     <td className="px-4 py-4 whitespace-nowrap text-xs text-gray-500 dark:text-gray-400 align-top">
@@ -259,7 +280,7 @@ function RekapPage() {
                                         </div>
                                     </td>
                                     
-                                    {/* Detail Item (Multilines) */}
+                                    {/* Detail Item */}
                                     <td className="px-4 py-4 text-sm text-gray-900 dark:text-white align-top">
                                         <div className="space-y-2">
                                             {order.items && order.items.map((item, idx) => (
@@ -284,7 +305,7 @@ function RekapPage() {
                                         <div className="font-semibold text-gray-900 dark:text-white mb-1">
                                             Penerima: {order.nama_penerima}
                                         </div>
-                                        <div className="text-xs leading-relaxed bg-gray-50 dark:bg-gray-700/50 p-2 rounded border border-gray-100 dark:border-gray-600">
+                                        <div className="text-xs leading-relaxed bg-white/50 dark:bg-gray-700/50 p-2 rounded border border-gray-100 dark:border-gray-600">
                                             {order.alamat_pengiriman}
                                         </div>
                                     </td>
@@ -359,7 +380,7 @@ function RekapPage() {
                                                 💰 Lunas
                                             </button>
                                         )}
-                                        <Link to={`/pesan/detail/${order._id}`} className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-1 px-2 rounded text-xs w-full block text-center mt-1">
+                                        <Link to={`/pesan/detail/${order._id}`} className="bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 py-1 px-2 rounded text-xs w-full block text-center mt-1 shadow-sm">
                                             📄 Detail
                                         </Link>
                                     </td>
