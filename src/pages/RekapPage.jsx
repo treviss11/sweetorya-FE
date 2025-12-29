@@ -183,15 +183,15 @@ function RekapPage() {
                 <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
                     <div className="flex justify-between border-b dark:border-gray-700 pb-2">
                         <span className="text-gray-600 dark:text-gray-400">Bahan Baku</span>
-                        <span className="font-bold text-gray-800 dark:text-gray-200">{formatCurrency(summary.total_modal_bahan)}</span>
+                        <span className="font-bold text-gray-800 dark:text-gray-200">{formatCurrency(summary.pengeluaran.bahan)}</span>
                     </div>
                     <div className="flex justify-between border-b dark:border-gray-700 pb-2">
                         <span className="text-gray-600 dark:text-gray-400">Packaging</span>
-                        <span className="font-bold text-gray-800 dark:text-gray-200">{formatCurrency(summary.total_modal_packaging)}</span>
+                        <span className="font-bold text-gray-800 dark:text-gray-200">{formatCurrency(summary.pengeluaran.packaging)}</span>
                     </div>
                     <div className="flex justify-between border-b dark:border-gray-700 pb-2">
                         <span className="text-gray-600 dark:text-gray-400">Aset / Inventaris</span>
-                        <span className="font-bold text-gray-800 dark:text-gray-200">{formatCurrency(summary.total_modal_aset)}</span>
+                        <span className="font-bold text-gray-800 dark:text-gray-200">{formatCurrency(summary.pengeluaran.aset)}</span>
                     </div>
                 </div>
             </div>
