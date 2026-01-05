@@ -250,7 +250,7 @@ function RekapPage() {
                             onChange={(e) => setSelectedYear(e.target.value)}
                             className="border border-indigo-200 rounded px-3 py-1 text-sm bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:border-indigo-500"
                         >
-                            {[2024, 2025, 2026, 2027].map(y => (
+                            {Array.from({ length: (new Date().getFullYear() + 5) - 2020 + 1 }, (_, i) => 2020 + i).map(y => (
                                 <option key={y} value={y}>{y}</option>
                             ))}
                         </select>
@@ -276,8 +276,7 @@ function RekapPage() {
                             </p>
                             <div className="text-[10px] text-gray-400 mt-1">
                                 (Bahan: {formatCurrency(monthlyStats.pengeluaran.rincian.bahan)} + 
-                                Pack: {formatCurrency(monthlyStats.pengeluaran.rincian.packaging)} + 
-                                Aset: {formatCurrency(monthlyStats.pengeluaran.rincian.aset)})
+                                Pack: {formatCurrency(monthlyStats.pengeluaran.rincian.packaging)} 
                             </div>
                         </div>
 
