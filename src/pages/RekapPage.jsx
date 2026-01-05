@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchOrders, fetchSummary, updateOrderStatusApi, updateOrderTestimonialApi, downloadExcelReport } from '../services/api';
+import { fetchOrders, fetchSummary, updateOrderStatusApi, updateOrderTestimonialApi, downloadExcelReport, fetchMonthlyReport } from '../services/api';
 import { Link } from 'react-router-dom';
 
 // Helper format rupiah
@@ -17,6 +17,10 @@ function RekapPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [testimonialLinks, setTestimonialLinks] = useState({}); 
+    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); 
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); 
+    const [monthlyStats, setMonthlyStats] = useState(null); 
+    const [loadingMonthly, setLoadingMonthly] = useState(false);
 
     const loadData = async (page, search = '') => {
         setLoading(true);
@@ -27,9 +31,6 @@ function RekapPage() {
 
             setSummary(summaryRes.data);
             
-            // --- LOGIKA SORTING (BARU) ---
-            // Pisahkan logika: Belum Selesai di atas, Selesai di bawah.
-            // Jika status sama, urutkan berdasarkan tanggal terbaru.
             const sortedOrders = ordersRes.data.orders.sort((a, b) => {
                 const isFinishedA = a.status_pesanan === 'Selesai';
                 const isFinishedB = b.status_pesanan === 'Selesai';
@@ -123,6 +124,22 @@ function RekapPage() {
         }
     };
 
+    const loadMonthlyStats = async () => {
+        setLoadingMonthly(true);
+        try {
+            const res = await fetchMonthlyReport(selectedMonth, selectedYear);
+            setMonthlyStats(res.data);
+        } catch (err) {
+            console.error("Gagal muat laporan bulanan", err);
+        } finally {
+            setLoadingMonthly(false);
+        }
+    };
+
+    useEffect(() => {
+        loadMonthlyStats();
+    }, [selectedMonth, selectedYear]);
+
     if (loading) return <div className="text-center p-20 text-xl text-gray-500 dark:text-gray-400 animate-pulse">Sedang memuat data...</div>;
     if (error) return <div className="text-center p-20 text-red-500 font-bold">{error}</div>;
     if (!summary) return <div className="text-center p-20 text-gray-500">Data tidak ditemukan.</div>; 
@@ -207,6 +224,73 @@ function RekapPage() {
                         <span className="font-bold text-gray-800 dark:text-gray-200">{formatCurrency(summary.pengeluaran.aset)}</span>
                     </div>
                 </div>
+            </div>
+
+            <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-6 mb-8">
+                <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+                    <h3 className="text-lg font-bold text-indigo-900 dark:text-indigo-200 flex items-center gap-2">
+                        📅 Cek Keuntungan Bulanan
+                    </h3>
+                    
+                    {/* Filter Dropdown */}
+                    <div className="flex gap-2">
+                        <select 
+                            value={selectedMonth} 
+                            onChange={(e) => setSelectedMonth(e.target.value)}
+                            className="border border-indigo-200 rounded px-3 py-1 text-sm bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:border-indigo-500"
+                        >
+                            {Array.from({ length: 12 }, (_, i) => (
+                                <option key={i + 1} value={i + 1}>
+                                    {new Date(0, i).toLocaleString('id-ID', { month: 'long' })}
+                                </option>
+                            ))}
+                        </select>
+                        <select 
+                            value={selectedYear} 
+                            onChange={(e) => setSelectedYear(e.target.value)}
+                            className="border border-indigo-200 rounded px-3 py-1 text-sm bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:border-indigo-500"
+                        >
+                            {[2024, 2025, 2026, 2027].map(y => (
+                                <option key={y} value={y}>{y}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
+                {/* Hasil Perhitungan */}
+                {loadingMonthly ? (
+                    <div className="text-center py-4 text-indigo-400 animate-pulse">Menghitung...</div>
+                ) : monthlyStats ? (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                            <p className="text-xs text-gray-500 uppercase font-bold">Pemasukan (Lunas)</p>
+                            <p className="text-xl font-bold text-green-600 dark:text-green-400">
+                                {formatCurrency(monthlyStats.pendapatan)}
+                            </p>
+                        </div>
+                        
+                        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                            <p className="text-xs text-gray-500 uppercase font-bold">Total Pengeluaran</p>
+                            <p className="text-xl font-bold text-red-600 dark:text-red-400">
+                                {formatCurrency(monthlyStats.pengeluaran.total)}
+                            </p>
+                            <div className="text-[10px] text-gray-400 mt-1">
+                                (Bahan: {formatCurrency(monthlyStats.pengeluaran.rincian.bahan)} + 
+                                Pack: {formatCurrency(monthlyStats.pengeluaran.rincian.packaging)} + 
+                                Aset: {formatCurrency(monthlyStats.pengeluaran.rincian.aset)})
+                            </div>
+                        </div>
+
+                        <div className={`p-4 rounded-lg shadow-sm border-2 ${monthlyStats.profit_bersih >= 0 ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/30 dark:border-blue-800' : 'bg-red-50 border-red-200'}`}>
+                            <p className="text-xs text-gray-500 uppercase font-bold">Profit Bersih Bulan Ini</p>
+                            <p className={`text-2xl font-extrabold ${monthlyStats.profit_bersih >= 0 ? 'text-blue-700 dark:text-blue-300' : 'text-red-600'}`}>
+                                {formatCurrency(monthlyStats.profit_bersih)}
+                            </p>
+                        </div>
+                    </div>
+                ) : (
+                    <p className="text-center text-gray-500">Data tidak tersedia.</p>
+                )}
             </div>
 
             <div className="mb-6">

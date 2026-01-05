@@ -48,4 +48,6 @@ export const downloadExcelReport = () => {
     });
 };
 
+export const fetchMonthlyReport = (month, year) => api.get(`/reports/monthly?month=${month}&year=${year}`);
+
 export default api; // Bisa juga tidak diexport default jika hanya memakai fungsi di atas
